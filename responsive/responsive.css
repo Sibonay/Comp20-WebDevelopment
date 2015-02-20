@@ -59,7 +59,7 @@
 		background: url('software.png') -256px -240px;	
 }
 
-@media screen and (min-width: 4 01px) and (max-width: 500px) {
+@media screen and (min-width: 401px) and (max-width: 500px) {
 	.software {
 		width: 128px;
 		height: 240px;
