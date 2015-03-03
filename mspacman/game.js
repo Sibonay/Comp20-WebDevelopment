@@ -1,14 +1,18 @@
-var image_sprite = new Image();
-image_sprite.src = "pacman10-hp-sprite.png";
-
 canvas = document.getElementById('game_canvas');
 ctx = canvas.getContext('2d');
 
+var image_sprite = new Image();
+image_sprite.src = "pacman10-hp-sprite.png";
 
-<body onload="function() {	
-	ctx.drawImage(image_sprite, 324, 1, 462, 33, 0, 0, 800, 600);
+image_sprite.addEventListener("load", function() {
+	// draws the blue board
+	ctx.drawImage(image_sprite, 324, 1, 462, 33, 0, 0, 800, 600); 
+	// draws Ms. Pac-Man
 	ctx.drawImage(image_sprite, 80, 18, 20, 20, 30, 25, 20, 20);
-}"> 
+}, false);
+
+
+
 
 
 //getting background from sprite: 
