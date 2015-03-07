@@ -13,6 +13,3 @@ function MyCallbackFunction() {
 		document.getElementByID("messages").innerHTML = xhr.responseText;
 	}
 }
-
-
-
