@@ -1,7 +1,7 @@
 function myCallbackFunction() {
 	if (xhr.readyState == 4 && xhr.status == 200) {
 		data = JSON.parse(xhr.responseText);
-		document.getElementByID("messages").innerHTML = xhr.responseText;
+		document.getElementById("messages").innerHTML = xhr.responseText;
 	}
 }
 
