@@ -1,6 +1,7 @@
 function myCallbackFunction() {
 	if (xhr.readyState == 4 && xhr.status == 200) {
 		data = JSON.parse(xhr.responseText);
+		debugger;
 		for (i = 0; i < data.length; i++) {   // syntax											// check syntax
 			document.getElementById("messages").innerHTML = 
 			data[i][content] + ' ' + data[i][username]; 
