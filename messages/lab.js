@@ -3,8 +3,7 @@ function myCallbackFunction() {
 		data = JSON.parse(xhr.responseText);
 		for (i = 0; i < data.length; i++) {   // syntax											// check syntax
 			document.getElementById("messages").innerHTML = 
-			data[i][content] + ' ' + data[i][username]; 
-			console.log(data[i][content] + ' ' + data[i][username]);
+			data[i]["content"] + ' ' + data[i]["username"]; 
 		// how to print elements of a key value pair...
 		}
 	}
