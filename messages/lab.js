@@ -3,15 +3,14 @@ function myCallbackFunction() {
 		data = JSON.parse(xhr.responseText);
 		console.log(data);
 		console.log(data["content"]);
-		for (i = 0; i < data.length; i++) {   // syntax											// check syntax
-			document.getElementById("messages").innerHTML = 
+		for (i = 0; i < data.length; i++) {   										// check syntax
+			document.getElementById("messages").innerHTML += 
 			data[i]["content"] + ' ' + data[i]["username"]; 
-		// how to print elements of a key value pair...
 		}
 	}
 }
 
-function parse() { // is a diff parse from above
+function parse() { 
 	xhr = new XMLHttpRequest();
 
 	xhr.open("GET", "data.json", true);
