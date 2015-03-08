@@ -9,7 +9,7 @@ function myCallbackFunction() {
 	}
 }
 
-function parse() { // is a diff parse
+function parse() { // is a diff parse from above
 	xhr = new XMLHttpRequest();
 
 	xhr.open("GET", "data.json", true);
