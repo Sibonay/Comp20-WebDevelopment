@@ -1,1 +1,4 @@
-/* Your CSS here... */
+#messages {
+	color: red;
+	font-family: "Comic Sans MS";
+}
