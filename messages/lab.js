@@ -4,7 +4,7 @@ function myCallbackFunction() {
 		console.log(data);
 		console.log(data["content"]);
 		for (i = 0; i < data.length; i++) {   										// check syntax
-			document.getElementById("messages").innerHTML += 
+			document.getElementById("messages").innerHTML += \n
 			data[i]["content"] + ' ' + data[i]["username"]; 
 		}
 	}
