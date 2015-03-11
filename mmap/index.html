@@ -5,12 +5,12 @@
 <head>
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8" />
 	<title>The Real Marauder's Map</title>
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true" ></script>
 	<link rel="stylesheet" href="style.css" type="text/css" />
 
 
 	<script>
-
+		// NOTE: ADD PLACES API TO SCRIPT ABOVE IF NEED IT!!!!!
 		var myLat = 0;
 		var myLng = 0;
 		var request = new XMLHttpRequest();
@@ -48,9 +48,29 @@
 				});
 			}
 			else {
+				alert("geolocation not supported")
 				// SOMETHING HERE!!!! DO IE CHECK?
 			}
+
+			// get other people's locations here????
 		}
+
+		function renderMap() {
+			me = new google.maps.LatLng(myLat, myLng);
+			map.panTo(me);
+
+			marker = new google.maps.Marker({
+				position: me,
+				title: "This is me!"
+				// find out how to change image for marker
+			});
+			marker.setMap(map);
+
+			// open info window
+
+			
+		}
+
 	</script>
 </head>
 
