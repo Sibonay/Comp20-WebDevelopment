@@ -79,6 +79,11 @@
 	      			});
 	      			student_marker.setMap(map);
 
+	      			var student_infowindow = new google.maps.InfoWindow();
+					google.maps.event.addListener(student_marker, 'click', function() {
+		        				infowindow.setContent(this.title);
+		        				infowindow.open(map, this);
+		        			});
 					// create brand new people list and keep on appending...
 					// var markers = [];
 					// markers.push[new.google.maps.Marker([position: pt, title: "hi"])]
