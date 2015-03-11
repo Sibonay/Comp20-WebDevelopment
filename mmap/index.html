@@ -16,14 +16,30 @@
 	            mapOptions);
 
 	        // try W3C geolocation
-	        /*if(navigator.geolocation) {
+	        if(navigator.geolocation) {
 	        	navigator.geolocation.getCurrentPosition(function(position) {
 	        			myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 	        			map.setCenter(myLocation);
-	        	})
+
+	        			my_marker_image = "grumpy_cat.png"
+	        			my_marker = new google.maps.Marker({
+	        				position: myLocation,
+	        				title: "KelleyRumfelt",
+	        				icon: my_marker_image,
+	        			});
+	        			my_marker.setMap(map);
+
+	        			// open info window on click of marker
+	        			infowindow = new google.maps.InfoWindow();
+	        			google.maps.event.addListener(my_marker, 'click', function() {
+	        				infowindow.setContent(my_marker.title);
+	        				infowindow.open(map, my_marker);
+	        			});
+
+	        	});
 	        } else {
 	        	alert("your browser doesn't support geolocation");
-	        }*/
+	        }
 	      }
 
 	    </script>
