@@ -7,39 +7,113 @@
 	    </script>
 
 	    <script type="text/javascript">
-	      function initialize() {
-	        var mapOptions = {
-	          zoom: 13,
-	          mapTypeId: google.maps.MapTypeId.ROADMAP
-	        };
-	        var map = new google.maps.Map(document.getElementById('map-canvas'),
-	            mapOptions);
 
-	        // try W3C geolocation
-	        if(navigator.geolocation) {
-	        	navigator.geolocation.getCurrentPosition(function(position) {
-	        			myLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-	        			map.setCenter(myLocation);
+	    // 	http://127.0.0.1:8080/    USE THIIIS!!!!!
+	    	function initialize() {
 
-	        			my_marker_image = "grumpy_cat.png"
-	        			my_marker = new google.maps.Marker({
-	        				position: myLocation,
-	        				title: "KelleyRumfelt",
-	        				icon: my_marker_image,
-	        			});
-	        			my_marker.setMap(map);
+		      	mapOptions = {
+		          zoom: 13,
+		          mapTypeId: google.maps.MapTypeId.ROADMAP
+		    	 };
+		     	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-	        			// open info window on click of marker
-	        			infowindow = new google.maps.InfoWindow();
-	        			google.maps.event.addListener(my_marker, 'click', function() {
-	        				infowindow.setContent(my_marker.title);
-	        				infowindow.open(map, my_marker);
-	        			});
+		        // try W3C geolocation
+		        if(navigator.geolocation) {
+		        	navigator.geolocation.getCurrentPosition(function(position) {
+		        			myLat = position.coords.latitude;
+		        			myLng = position.coords.longitude;
+		        			myLocation = new google.maps.LatLng(myLat, myLng);
+		        			map.setCenter(myLocation);
 
-	        	});
-	        } else {
-	        	alert("your browser doesn't support geolocation");
-	        }
+		        			//  NOW ONLY RUNS WHEN MYLAT AND LNG ARE SET
+					        // get locations of classmates, post my location
+					        xhr = new XMLHttpRequest();
+					        xhr.open("POST", "https://secret-about-box.herokuapp.com/sendLocation", true);
+					        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); 
+
+					        xhr.onreadystatechange = CallbackFunc; 
+					        xhr.send("login=KelleyRumfelt&lat="+myLat+"&lng="+myLng);
+
+
+		        			my_marker_image = "grumpy_cat.png";
+		        			my_marker = new google.maps.Marker({
+		        				position: myLocation,
+		        				title: "KelleyRumfelt",
+		        				icon: my_marker_image,
+		        			});
+		        			my_marker.setMap(map);
+
+		        			// open info window on click of marker
+		        			infowindow = new google.maps.InfoWindow();
+		        			google.maps.event.addListener(my_marker, 'click', function() {
+		        				infowindow.setContent(my_marker.title);
+		        				infowindow.open(map, my_marker);
+		        			});
+
+		        	});
+		        } else {
+		        	alert("your browser doesn't support geolocation");
+		        }
+
+
+	      }
+
+	      function CallbackFunc() {
+	      	if (xhr.readyState == 4 && xhr.status == 200) {
+	      		data = JSON.parse(xhr.responseText);
+
+	      		for (i = 0; i < data.length; i++) {
+	      			var student_lat = data[i]["lat"];
+	      			var student_lng = data[i]["lng"];
+	      			var student_login = data[i]["login"];
+
+	      			var student_location = new google.maps.LatLng(student_lat, student_lng);
+
+	      			var distance = CalculateDistance(student_lat, student_lng);
+
+	      			console.log(distance);
+
+	      			var student_marker = new google.maps.Marker({
+	      				position: student_location,
+	      				title: student_login,
+	      			});
+	      			student_marker.setMap(map);
+
+					// create brand new people list and keep on appending...
+					// var markers = [];
+					// markers.push[new.google.maps.Marker([position: pt, title: "hi"])]
+					// or better idea is to store latlng
+					//list = [];
+					//list.push(new google.maps.LatLng(); something like this
+
+					// NOTE: USE THIS KEYWORD FOR POPUP WINDOW
+
+	      			// data[i][_id] 
+	      			// data[i][login]
+	      			// data[i][lat]
+	      			// data[i][lng]
+	      			// data[i][created_at]
+	      		}
+			}
+
+			function CalculateDistance(lat, lng) {
+				var radius = 6371000; // meters
+
+				var difference_lat = myLat - lat; 
+				var difference_lng = myLng - lng; 
+
+				var distance_lat = toRadians(difference_lat);
+				var distance_lng = toRadians(difference_lng);
+
+				var a = Math.sin(distance_lat/2) * Math.sin(distance_lat/2) + Math.cos(toRadians(difference_lat)) * Math.cos(toRadians(difference_lng)) * Math.sin(distance_lng/2) * Math.sin(distance_lng/2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+				return (radius * c)/0.0010000; // converts distance to miles
+			}
+
+			function toRadians(deg) {
+				return deg * Math.PI / 180;
+			}
+
 	      }
 
 	    </script>
