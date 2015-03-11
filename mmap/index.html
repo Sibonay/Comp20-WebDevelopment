@@ -38,7 +38,7 @@
 		        			my_marker_image = "grumpy_cat.png";
 		        			my_marker = new google.maps.Marker({
 		        				position: myLocation,
-		        				title: "KelleyRumfelt",
+		        				title: "This is me! (KelleyRumfelt)",
 		        				icon: my_marker_image,
 		        			});
 		        			my_marker.setMap(map);
@@ -66,16 +66,13 @@
 	      			var student_lat = data[i]["lat"];
 	      			var student_lng = data[i]["lng"];
 	      			var student_login = data[i]["login"];
-
 	      			var student_location = new google.maps.LatLng(student_lat, student_lng);
-
 	      			var distance = CalculateDistance(student_lat, student_lng);
 
-	      			console.log(distance);
 
 	      			var student_marker = new google.maps.Marker({
 	      				position: student_location,
-	      				title: student_login,
+	      				title: student_login + '<br />' + distance  + " miles away"
 	      			});
 	      			student_marker.setMap(map);
 
@@ -93,16 +90,11 @@
 
 					// NOTE: USE THIS KEYWORD FOR POPUP WINDOW
 
-	      			// data[i][_id] 
-	      			// data[i][login]
-	      			// data[i][lat]
-	      			// data[i][lng]
-	      			// data[i][created_at]
 	      		}
 			}
 
 			function CalculateDistance(lat, lng) {
-				var radius = 6371000; // meters
+				var radius = 6371; // km
 
 				var difference_lat = myLat - lat; 
 				var difference_lng = myLng - lng; 
@@ -112,7 +104,7 @@
 
 				var a = Math.sin(distance_lat/2) * Math.sin(distance_lat/2) + Math.cos(toRadians(difference_lat)) * Math.cos(toRadians(difference_lng)) * Math.sin(distance_lng/2) * Math.sin(distance_lng/2);
 				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-				return (radius * c)/0.0010000; // converts distance to miles
+				return (radius * c) * 0.6213; // converts distance to miles
 			}
 
 			function toRadians(deg) {
