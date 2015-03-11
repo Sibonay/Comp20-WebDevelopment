@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8" />
+	<title>The Real Marauder's Map</title>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+	<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+	<script>
+
+		var myLat = 0;
+		var myLng = 0;
+		var request = new XMLHttpRequest();
+		var me = new google.maps.LatLng(myLat, my Lng);
+
+		// set up map
+		var myOptions = {
+				zoom = 13,
+				center: me,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+
+		var map;
+		var marker;
+		// HOW TO GET INFO WINDOW FOR EVERYONE??
+		var infowindow = new google.maps.InfoWindow(); 
+		var places;
+
+		function init()
+		{
+			// create the map in the "map_canvas" <div>
+			var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+			getMyLocation();
+
+			// global info window - what does that even mean?
+			// open info window on click of marker
+		}
+
+		function getMyLocation() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position)) {
+					myLat = position.coords.latitude;
+					myLng = position.coords.longitude;
+					renderMap(); // NOTE SHOULD DO THIS AFTER GET OTHER PEOPLE'S STUFF????
+				});
+			}
+			else {
+				// SOMETHING HERE!!!! DO IE CHECK?
+			}
+		}
+	</script>
+</head>
+
+
+<body onload="init()">
+	<div id="map_canvas"></div>
+</body>
+
+</html>
