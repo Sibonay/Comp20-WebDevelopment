@@ -1,3 +1,5 @@
+// 	http://127.0.0.1:8080/
+
 function myCallbackFunction() {
 	if (xhr.readyState == 4 && xhr.status == 200) {
 		data = JSON.parse(xhr.responseText);
@@ -13,6 +15,7 @@ function parse() {
 	xhr = new XMLHttpRequest();
 
 	xhr.open("GET", "data.json", true);
+	xhr.setRequestHeader("Content-type", "https://secret-about-box.herokuapp.com/sendLocation");
 	xhr.onreadystatechange = myCallbackFunction;
 
 	xhr.send();

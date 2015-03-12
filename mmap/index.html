@@ -8,14 +8,13 @@
 
 	    <script type="text/javascript">
 
-	    // 	http://127.0.0.1:8080/    USE THIIIS!!!!!
 	    	function initialize() {
 
 		      	mapOptions = {
 		          zoom: 13,
 		          mapTypeId: google.maps.MapTypeId.ROADMAP
 		    	 };
-		     	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		     	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
 		        // try W3C geolocation
 		        if(navigator.geolocation) {
@@ -25,7 +24,6 @@
 		        			myLocation = new google.maps.LatLng(myLat, myLng);
 		        			map.setCenter(myLocation);
 
-		        			//  NOW ONLY RUNS WHEN MYLAT AND LNG ARE SET
 					        // get locations of classmates, post my location
 					        xhr = new XMLHttpRequest();
 					        xhr.open("POST", "https://secret-about-box.herokuapp.com/sendLocation", true);
@@ -81,15 +79,6 @@
 		        				infowindow.setContent(this.title);
 		        				infowindow.open(map, this);
 		        			});
-					// create brand new people list and keep on appending...
-					// var markers = [];
-					// markers.push[new.google.maps.Marker([position: pt, title: "hi"])]
-					// or better idea is to store latlng
-					//list = [];
-					//list.push(new google.maps.LatLng(); something like this
-
-					// NOTE: USE THIS KEYWORD FOR POPUP WINDOW
-
 	      		}
 			}
 
@@ -119,5 +108,5 @@
 
     <body onload = "initialize()">
 		<div id="map-canvas"></div>
-  </body>
+  	</body>
 </html>

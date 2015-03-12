@@ -1,0 +1,13 @@
+The Real Marauder's Map - Sibonay Koo 
+
+1) Website features (all parts of assignment correctly implemented):
+	- retrieves your (the client's) location via JS navigator.geolocation object
+	- sends your location (latitude, longitude, login) to datastore
+	- displays your location on the map with unique marker and info window
+	- retrieves locations of other people in the class and displays their location on the map 	with an info window containing their names and distance in miles away from you
+
+2) Discussed the geolocation part of the assignment with Andrew Schneer
+
+3) Hours spent: 8
+
+
