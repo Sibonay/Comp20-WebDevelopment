@@ -14,6 +14,7 @@
 	  			if(e.which == 13) {
 	  				var now = Date();
 	  				$("#log").prepend("<p>" + now + ' - ' + $("input[name=msg]").val() + "<p>");
+	  				$("#msg").val("");
 	  				if(localStorage){
 	  					//localStorage. //hkjhkjh
 	  				}
