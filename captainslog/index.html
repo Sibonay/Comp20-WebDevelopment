@@ -6,7 +6,36 @@
 	<title>Captain's Log</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script>
-	  // Most of your work will be done here...
+	  	$(document).ready(function() {
+	  		// print whatever is in localstorage
+
+	  		// check for when enter is pressed in textbox
+	  		$("#msg").keypress(function(e) {
+	  			if(e.which == 13) {
+	  				var now = Date();
+	  				$("#log").prepend("<p>" + now + ' - ' + $("input[name=msg]").val() + "<p>");
+	  				if(localStorage){
+	  					//localStorage. //hkjhkjh
+	  				}
+	  				// clear textbox afterwards
+	
+	  			}
+	  		});
+
+	  		// get value of whatever is in textbox
+	  		// prepend it to whatever is printed on page
+	  		// also prepend it to what's in localstorage with string concatenation 
+
+
+	  		/*textbox = $(#"msg").val(); // MSG OR DOCUMENT??
+	  		textbox.keypress(function(e)) { // CAN DO THIS?
+	  			if(e.which == 13) { // return key
+	  				if(localStorage){
+	  					localStorage.setItem()
+	  				}
+	  			}
+	  		} */
+		}); // now is stamp
 	</script>
 </head>
 
