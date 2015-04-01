@@ -13,8 +13,8 @@
 	  		}
 
 	  		// check for when enter is pressed in textbox
-	  		$("#msg").keypress(function(e) {
-	  			if(e.which == 13) {
+	  		$("#msg").keypress(function(key) {
+	  			if(key.which == 13) {
 	  				var now = Date();
 	  				$("#log").prepend("<p>" + now + ' - ' + $("input[name=msg]").val() + "<p>");
 
