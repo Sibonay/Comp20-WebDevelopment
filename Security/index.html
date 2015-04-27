@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marauder's map and its server: A Security Report</title>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.galleryTable').each(function(index, elem){
+                $('img', elem).wrap(function() {
+                    return '<a class="fancybox" rel="gal' + index + '" href="' + $(this).prop('src') + '" title="' + $(this).prop('title') + '">' + $(this).html() + '</a>';
+                });
+            });
+
+            $('.fancybox').not("[rel^='gal']").wrap(function() {
+                return '<a class="fancybox" href="' + $(this).prop('src') + '" title="' + $(this).prop('title') + '">' + $(this).html() + '</a>';
+            });
+            $(".fancybox").fancybox({
+                openEffect  : 'elastic',
+                closeEffect : 'elastic',
+
+                helpers : {
+                    title : {
+                        type : 'inside'
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Security Assessment of Marauder's Map and server</h1>
+
+<p>Prepared by <a href="http://sibonay.github.io">Sibonay Koo</a> &bull; 4/26/2013</p>
+
+<h2>Introduction</h2>
+
+<p>This assessment tests the security of the <a href="http://afternoon-falls-2311.herokuapp.com/">Marauder's Map</a> web application and its server-side application developed by Gabe Jacobs for <a href="http://tuftsdev.github.io/WebProgramming/assignments/a2.html">Comp20 assignment 2</a> and <a href="http://tuftsdev.github.io/WebProgramming/assignments/a3.html">Comp20 assignment 3</a>. According to the specifications he followed from his client, Marauder's Map "retrieves [the client's] current location and sends [his/her] current location to a datastore." It also offers a web interface using the Google Maps API that, using XMLHTTP requests, retrives and displays the locations of  classmates. However, vulnerabilities in the application currently make it unsuitable for public use. This document identifies those vulnerabilities and suggests solutions for them.</p>
+
+<h2>Methodology</h2>
+
+<p>Testing was first carried out "black-box", using just what would be available to an attacker. I then reviewed the code to find more logic errors and opportunities for server-side exploitation. To submit GET and POST requests, I used Curl and a Google Chrome extension called Postman. This report will focus on the server application both because it contains the sensitive information and also because it is more complex and has more interfaces for me to exploit.</p>
+
+<h2>Abstract of Findings</h2>
+
+<p> This web application contains many security vulnerabilities that, if exploited, will affect the user experience at the very least, and may also pose actual security threats to the users. Most of these issues stem from the server side of the application placing too much trust in user input and assuming, not asserting, its correctness. Not only could a malicious user mishandle the Send Location interface to send falsified data to the server; he or she could also use the Locations interface to easily access sensitive information about every single one of the server's clients. Furthermore, the server allows absolutely anyone to send data to it and access its data, which poses an obvious risk to both the functionality of the web application and the security/privacy of its users. To resolve these issues, the application should include checks to ensure that any requests it receives contain valid parameters that also match the information sent by the client's browser (e.g. their IP address). It should add checks to make sure that only specific whitelisted applications may interact with it. Fortunately, the application does stop one of the most common types of attacks, as it prevents code that a hacker could submit as login data which would instead crash the site or modify the site's experience.</p>
+
+<h2>Issues Found</h2>
+
+<ol>
+<li><p><strong>MongoDB Database Injections</strong></p>
+
+<ul>
+<li>Affects GET API</li>
+<li><span class="high">Severity: High</span></li>
+<li>The GET request (/) returns a list of all the past checkins of different users (it displays their name and their checkin time in plaintext). A GET request using the route '/locations.json' with a username query concatenated to the URL should return a JSON associative array containing this user's previous login information (_id, login, lat, lng, created_at). This information is stored in a MongoDB database, and by using MongoDB querying features, one could get the information of <em>all</em> the users. For example, using the query <code>login[$ne]=mchow</code>, which uses the "not equal" operator, one can see the login details of all users who do not have the username "mchow". Alternatively, <code>login[$gt]= </code> returns every login "greater than" an empty string--i.e. all of them.
+<table class="galleryTable">
+    <tr><td><img src="mchow-login-query.png" alt="normal query" title="Client site with normal query" /></td>
+    <td><img src="MongoDB-injection.png" alt="query using MongoDB's greater than operator" title="Client site with query using the MongoDB 'greater than' operator" /></td></tr>
+</table></li>
+<li>Severity rationale: such a breach in privacy can be very dangerous in the real world. In this case, there is not much sensitive personal information being stored, but were the site to store passwords or credit card details, the potential negative consequences would be disastrous.</li>
+<li> Recommendation: the application should verify that parameters for GET and POST requests match expected parameters. The application could escape certain input such as '[$' to avoid having MongoDB operations as request parameters.</li>
+<li>Also, while every database system has its pros and cons, one must keep in mind the innate security issues of using MongoDB:
+<table class="galleryTable">
+    <tr><td><img src="MongoDB_security_issues.png" alt="MongoDB security issues" title="MongoDB Security issues" /></td>
+</table>
+Source: Ming Chow, <a href="https://mchow01.github.io/talks/bsmcon3-mchow.pdf">A growing Mongo Problem</a></li>
+</ul>
+
+
+<li><p><strong>Enabling Cross Origin Resource Sharing</strong></p>
+
+<ul>
+<li>Affects GET and POST API</li>
+<li><span class="mod">Moderate</span></li>
+<li> Both the GET and POST APIs contain: <code>response.header("Access-Control-Allow-Origin", "*");</code>. This header allows sharing with every origin (i.e. any site can send an XHR request to the site and access the server’s response). This has huge potential for abuse; for example, a remote hacker could access the login information of every user using the MongoDB operands mentioned above. MongoDB runs by default on TCP port 27017, so an attacker would simply need to run a port scan on the internet to find openly accessible databases: <a href="http://www.information-age.com/technology/security/123459001/major-security-alert-40000-mongodb-databases-left-unsecured-internet">a major security breach occured only a couple months ago.</a></li>
+<li>This issue could be easily resolved by only whitelisting certain trusted domains, such as the Marauder's map client: <code>header("Access Control Allow Origin: http://tuftsdev.github.io/comp20-gjacobs/mmap/")</code>. If many domains need to be whitelisted, to prevent header clutter, it might be easier to only emit the header if necessary, i.e. when an OPTIONS request is gotten from a whitelisted domain:
+<pre><code>if ($_SERVER["REQUEST_TYPE"] === "OPTIONS") { // special CORS track
+    $allowed_domains = array("http://my.domain.com", "https://my.domain.com", "http://my.otherdomain.com");
+    $calling_domain = get_calling_domain($_SERVER);
+    if (in_array($calling_domain, $allowed_domains)) {
+        header("Access-Control-Allow-Origin: " . $calling_domain);
+    }
+    exit; // no need to do anything else for OPTIONS request
+}
+</code></pre>
+This will also prevent others from viewing the entire whitelist when they make an OPTIONS request, which could lead them to all domains which make use of the API. Code source: <a href="https://fritsvancampen.wordpress.com/2013/02/03/cross-site-origin-requests-aka-cross-origin-resource-sharing/">Frits van Campen</a></li>
+<li>Note: one should still not on the Origin Header for Access Control checks. Browsers always send this information in CORS requests, but may be spoofed outside the browser. Application-level protocols, e.g. parameter verification, should be used to protect sensitive data.</li>
+</p>
+</ul>
+
+<ul>
+<li><p><strong>Injection of false data</strong></p>
+<li>In POST API</li>
+<li><span class="low">Low</span></li>
+<li>By using Curl or Postman, I managed to insert completely false information into the Database. This is an issue as it compromises the integrity of applications which use the API, as they presumably expect the information to come from 'real' users and to be valid. Nonetheless, it poses less of a threat than the other security issues identified earlier as it does not result in the release of sensitive data.
+<table class="galleryTable">
+<tr><td><img src="Postman.png" alt="Using Postman to insert false data" title="Using Postman to insert false data" /></td>
+<td><img src="Obama_login.png" alt="False data" title="False Data" /></td>
+<td><img src="Obama_login_details.png" alt="False data query" title="False Data query" /></td></tr>
+</table></li>
+<li>As the screenshots demonstrate, a hacker can post falsify every key-value pair. In this case, I pretended I was president Obama and provided latitudes and longitudes that locate him in Africa.</li>
+</li>One way to counteract the problem of false locations would be to cross-reference the posted latitudes and longitudes with the client's IP address. This line of code could be added to the server's app.js file to get the client's IP: <code>var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;</code> 
+<p><a href="http://www.hacksparrow.com/node-js-get-ip-address.html">Source: http://www.hacksparrow.com/node-js-get-ip-address.html</a></p></li>
+<li>While it is harder to verify login information (and there is not necessarily the API specification that a user's login must reflect their actual identity), to prevent bots from spamming the server with false data, the server could set a cap on the number of Post requests that can be made by any one IP address.</li>
+</ul>
+
+<ul>
+<li><p><strong>A more positive security note</strong></p>
+<li>One positive aspect of this site's security is that, due to the server application's use of the Mongoose API, I was unable to conduct script injection attacks on the site (all carets containing script or style tags were simply printed in plaintext on the page). I was also unable to break the server by flooding it with huge amounts of data.
+<table class="galleryTable">
+    <tr><td><img src="script_injection_attempt.png" alt="script injection attempt" title="script injection attempt" /></td>
+</table>
+</li>
+</ul>
+
+
+<h2>Conclusion</h2>
+
+<p>As usage of this web application becomes heavier, it will become more and more necessary to address its vulnerabilities.To ensure its functionality and the security of its users, modifications to the server-side code should be made based on the recommendations given in this report. Fortunately, all the changes are easy to implement, and should only take a small amount of supplementary code. In the future, it would be helpful to keep in mind the innate security issues of using MongoDB's database system when adding additional features so that the web application does not fall victim to the attacks that thousands of users across the world have already encountered.</p>
+</body>
+</html>
